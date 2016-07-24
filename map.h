@@ -24,7 +24,7 @@ class MapList {
     funT f;
 public:
     using argument_type = typename listT::value_type;
-    using value_type = result_type<funT,argument_type>;
+    using value_type = typename std::result_of<funT(argument_type)>::type;
     class iterator : public listT::iterator {
         funT f;
     public:
@@ -49,7 +49,7 @@ public:
 };
 
 
-template < typename listT, typename funT, typename = result_type<funT,typename listT::value_type>>
+template < typename listT, typename funT, typename = typename std::result_of<funT(typename listT::value_type)>::type>
 auto map(listT args, funT fun) -> MapList<listT, funT> {
     return MapList<listT, funT>(args,fun);
 }

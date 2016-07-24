@@ -12,7 +12,4 @@
 #include <functional>
 #include <algorithm>
 
-template <typename funT,typename arg>
-using result_type = decltype(std::declval<funT>()(std::declval<arg>()));
-
 #endif /* base_h */
