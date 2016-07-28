@@ -38,13 +38,16 @@ int main(int argc, const char * argv[]) {
 
     //x: [int]
     auto x = map(map(source, id),inc);
+    //id and inc called when iterator dereferenced first time
     for (auto i : x) {
         std::cout << "return i = " << i << "<- return i" << std::endl;
     }
-    
-    //not memonized yet;
-    //multiple trails getting value from mapp'd containers will call the function multiple times.
-    //to be implemented
+    //value are stored, will not be called in consequent dereference
+    for (auto i = x.begin(); i != x.end(); i++) {
+        std::cout << "return i = " << *i << "<- return i" << std::endl;
+    }
+    //to container, no longer lazy, everything evaluated
+    //todo: move iterator?
     auto list = x.toContainer<std::list<int>>();
     for (auto i : list) {
         std::cout << "return i = " << i << "<- return i" << std::endl;
