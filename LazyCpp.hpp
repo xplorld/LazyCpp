@@ -13,5 +13,6 @@
 #include "map.h"
 #include "reduce.h"
 #include "ycombinator.h"
+#include "filter.h"
 
 #endif /* LazyCpp_h */

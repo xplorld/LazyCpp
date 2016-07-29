@@ -68,6 +68,19 @@ int main(int argc, const char * argv[]) {
     auto res = reduce(source, adder, 0);
     std::cout << "res = " << *res << std::endl;
     std::cout << "again, res = " << *res << std::endl;
-    
+
+    /*
+     filter
+     */
+    auto is_odd([](int i) {return bool(i & 0x01);});
+    auto odds = filter(map(source,id),is_odd);
+    for (auto x : odds) {
+        std::cout << x << std::endl;
+    }
+    for (auto x = odds.begin();
+         x != odds.end();
+         ++x) {
+        std::cout << *x << std::endl;
+    }
     return 0;
 }
