@@ -16,7 +16,7 @@ template <typename listT, typename funT>
 class LazyList {
 public:
     using argument_type = typename listT::value_type;
-    using value_type = typename std::result_of<funT(argument_type)>::type;
+    using value_type = typename result_of<funT(argument_type)>::type;
     friend class iterator;
 private:
     listT source;
@@ -79,12 +79,21 @@ public:
         return Container(begin(),end());
     }
     
-    LazyList(listT list, funT f) : source(list),f(f) {}
+    //copy
+    LazyList(listT const & list, funT f) : source(list),f(f) {}
+    //move
+    LazyList(listT&& list, funT f) : source(std::move(list)),f(f) {}
 };
 
-template < typename listT, typename funT, typename = typename std::result_of<funT(typename listT::value_type)>::type>
-auto map(listT args, funT fun) {
+template < typename listT, typename funT>
+auto map(listT const & args, funT fun) {
+    //typename std::remove_reference<listT>::type
     return LazyList<listT, funT>(args,fun);
+}
+template < typename listT, typename funT>
+auto map(listT && args, funT fun,typename std::enable_if<std::is_rvalue_reference<decltype(args)>::value>::type* = nullptr) {
+    //typename std::remove_reference<listT>::type
+    return LazyList<listT, funT>(std::move(args),fun);
 }
 
 #endif /* map_h */

@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <type_traits>
 
+#include "lazycppTypeTraits.h"
+
 template <typename value_type>
 class LazyPointer {
 private:
