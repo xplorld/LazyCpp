@@ -14,5 +14,6 @@
 #include "reduce.h"
 #include "ycombinator.h"
 #include "filter.h"
+#include "monad.h"
 
 #endif /* LazyCpp_h */

@@ -25,6 +25,63 @@ std::ostream &operator<<(std::ostream &os, Shouter const &m) {
 }
 
 
+int add(int i) {
+    return i+1;
+}
+int add(std::vector<int> i) {
+    return *i.begin()+1;
+}
+
+using namespace LazyCpp;
+
+void monadTest() {
+    //>>=
+    Array<int> {2,3,4}
+    .bind(mul2<Array, int>)
+    .bind(mul2int<Array<int>>)
+    .bind(print<Array, int>); //8, 12, 16
+    
+    //maybe
+    auto minus_1_positive_or_nil = [](const int& i) {
+        if (i < 2) {
+            return Maybe<int>();
+        } else {
+            return Maybe<int>(i-1);
+        }
+    };
+    
+    Maybe<int> {2}
+    .bind(mul2<Maybe, int>)
+    .bind(minus_1_positive_or_nil)
+    .bind(print<Maybe, int>); // 3
+    
+    
+    Maybe<int> {1}
+    .bind(minus_1_positive_or_nil)
+    .bind(print<Maybe, int>); //nil does not call binded function, noting printed
+    
+    
+    join(Array<Array<int>> {{1,2,3},{4,5,6}})
+    .bind(print<Array, int>); //1,2,3,4,5,6
+    
+    join(Maybe<Maybe<int>> {3})
+    .bind(print<Maybe, int>); //3
+    
+    join(Maybe<Maybe<int>>())
+    .bind(print<Maybe, int>); //nothing
+    
+    auto plusHalf = liftM<Array, int>([](const int& i) {return i + 0.5;});
+    plusHalf(Array<int> {1,2,3})
+    .bind(print<Array, double>); //1.5, 2.5, 3.5
+    
+    auto add = liftM2<Array, int, int>([](const int&i, const int&j) {return i+j;});
+    Array<int> arr {1,2,3};
+    Array<int> arr2 {1,2,3};
+    add(arr,arr2).bind(print<Array,int>);
+    //2,3,4,3,4,5,4,5,6
+}
+
+
 int main(int argc, const char * argv[]) {
     /*
      y combinator
@@ -95,5 +152,10 @@ int main(int argc, const char * argv[]) {
          ++x) {
         std::cout << *x << std::endl;
     }
+    
+    /*
+     monad
+     */
+    monadTest();
     return 0;
 }

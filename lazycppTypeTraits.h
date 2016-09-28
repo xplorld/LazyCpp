@@ -9,16 +9,17 @@
 #ifndef lazycppTypeTraits_h
 #define lazycppTypeTraits_h
 
-#include <type_traits>
+namespace LazyCpp {
+    
+    template <typename T>
+    struct result_of;
+    
+    template <class Fp, class ...Args>
+    struct result_of<Fp(Args...)>
+    {
+        using type = typename std::result_of<Fp(Args&...)>::type;
+    };
 
-template <typename T>
-struct result_of;
-
-template <class Fp, class ...Args>
-struct result_of<Fp(Args...)>
-{
-    using type = typename std::result_of<Fp(Args&...)>::type;
-};
-
+}
 
 #endif /* lazycppTypeTraits_h */
