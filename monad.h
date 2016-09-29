@@ -20,16 +20,16 @@
 namespace LazyCpp {
     
     //bind :: monad m => m T -> (T -> m U) -> m U
-    //if F :: M T -> M U
+    //if F :: T -> M U
     //bind_result_type :: M U
     //else SFINAE fail
     template<class F, template<class> class M, class T>
     using bind_result_type = typename std::enable_if<
     std::is_same<
-    decltype(std::declval<F>()(std::declval<const T&>())),
-    M<typename decltype(std::declval<F>()(std::declval<const T&>()))::type>
+        typename result_of<F (const T&)>::type, //type of F T
+        M<typename result_of<F (const T&)>::type::type> //F T is an M
     >::value,
-    decltype(std::declval<F>()(std::declval<const T&>()))
+    typename result_of<F (const T&)>::type
     >::type;
     
     //join :: Monad m => m (m a) -> m a
@@ -45,12 +45,12 @@ namespace LazyCpp {
     //F :: T -> U
     template< template<class> class M, class T, class F>
     std::function<
-    M<decltype(std::declval<F>()(std::declval<T>()))>
+    M<typename result_of<F (const T&)>::type>
     (M<T>)>
     liftM(F f) {
         //liftM f m1 = do { x1 <- m1; return (f x1) }
         //listM f m1 = m1 >>= \x. f x
-        using U = decltype(std::declval<F>()(std::declval<T>()));
+        using U = typename result_of<F (const T&)>::type;
         return [f](const M<T>& mt) {
             auto unit = [f](const T& t) {
                 auto u = f(t);
@@ -65,12 +65,12 @@ namespace LazyCpp {
     //F :: T -> U -> V
     template< template<class> class M, class T, class U, class F>
     std::function<
-    M<decltype(std::declval<F>()(std::declval<T>(),std::declval<U>()))>
+    M<typename result_of<F (const T&, const U&)>::type>
     (M<T>,M<U>)>
     liftM2(F f) {
         //liftM2 f m1 m2 = do { x1 <- m1; x2 <- m2; return (f x1 x2) }
         //liftM2 f m1 m2 = m1 >>= \x1.( m2 >>= \x2. return (f x1 x2) )
-        using V = decltype(std::declval<F>()(std::declval<T>(),std::declval<U>()));
+        using V = typename result_of<F (const T&, const U&)>::type;
         
         return [f](const M<T>& mt, const M<U>& mu) {
             auto unit1 = [f, mu](const T& t) {
