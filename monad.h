@@ -105,6 +105,12 @@ namespace LazyCpp {
         template <class F>
         using bind_result_type = bind_result_type<F, LazyCpp::Id, T>;
         
+        
+        //do not name the binding method as operator>>=
+        //since its right-to-left associated in C++
+        //but should be left-to-right in Haskell
+        //things like m >>= f1 >>= f2 is impossible without parenthesis
+        //so use ordinary methods instead
         template <class F>
         bind_result_type<F>
         bind(F binded) const {
